@@ -1,0 +1,294 @@
+package ty25;
+import java.sql.*;
+import java.awt.*;
+
+import javax.swing.*;
+
+import java.awt.event.*;
+class CDemo extends JFrame implements ActionListener
+{
+	Connection con;
+	PreparedStatement pst;
+	ResultSet rs;
+ Label l1,l2,l3,l4,l5,l6,l7,l8;
+    TextField t1,t2;
+    Button b1,b2,b3,b4,b5;
+    Checkbox ca1,ca2,cv1,cv2,cv3,ct1,ct2,ct3;
+    CheckboxGroup ca,cv,ct;
+    Choice c1,c2;
+ CDemo()
+ {
+	 try
+	 {
+	Class.forName("org.postgresql.Driver");
+	con=DriverManager.getConnection("jdbc:postgresql:postgres","postgres","root");
+
+	 }catch(Exception e)
+	 {
+       JOptionPane.showMessageDialog(this,e);
+	 }
+     setVisible(true);
+     setSize(800,800);
+     setLayout(null);
+     setBackground(Color.white);
+
+      l1=new Label("Co-Win Registration");
+      l2=new Label("Adhar  Card No");
+      l3=new Label("Birth  Year");
+      l4=new Label("Mobile No");
+      l5=new Label("Age Group");
+      l6=new Label("Select Hospital");
+      l7=new Label("Vaccines");
+      l8=new Label("Time Slot");
+
+      t1=new TextField(10);
+      t2=new TextField(10);
+      b1=new Button("Add");
+      b2=new Button("Update");
+      b3=new Button("Delete");
+      b4=new Button("View");
+      b5=new Button("Search");
+      
+
+      ca=new CheckboxGroup();
+      ca1=new Checkbox("18&above",ca,true);
+      ca2=new Checkbox("45 & above",ca,false);
+      cv=new CheckboxGroup();
+      cv1=new Checkbox("Covaxin",cv,true);
+      cv2=new Checkbox("Covishild",cv,false);
+      cv3=new Checkbox("Sputnik",cv,false);
+
+      ct=new CheckboxGroup();
+      ct1=new Checkbox("Morning",ct,true);
+      ct2=new Checkbox("Afternoon",ct,false);
+      ct3=new Checkbox("Evening",ct,false);
+
+      c1=new Choice();
+      c2=new Choice();
+
+     l1.setBounds(240,40,400,30);
+    l2.setBounds(50,80,120,50);  
+      t1.setBounds(200,90,200,30); 
+     l3.setBounds(50,140,100,30);
+     c1.setBounds(200,140,100,30);
+     l4.setBounds(50,200,100,30);
+     t2.setBounds(200,195,200,30);
+    l5.setBounds(50,260,100,30);
+    ca1.setBounds(200,250,150,30);
+    ca2.setBounds(400,250,200,30);   
+l6.setBounds(50,300,150,50);
+  c2.setBounds(200,310,100,30);
+  l7.setBounds(50,370,90,30); 
+   cv1.setBounds(200,370,100,30);
+  cv2.setBounds(300,370,100,30);
+  cv3.setBounds(400,370,100,30);       
+  l8.setBounds(50,390,150,50); 
+  ct1.setBounds(200,400,100,30);
+  ct2.setBounds(300,400,100,30);
+  ct3.setBounds(400,400,100,30);
+  
+  b1.setBounds(100,500,100,50); 
+  b2.setBounds(250,500,100,50); 
+  b3.setBounds(350,500,100,50); 
+  b4.setBounds(450,500,100,50); 
+  b5.setBounds(550,500,100,50); 
+
+  
+    Font f=new Font("C059",Font.BOLD,30);
+    Font f2=new Font("Norasi",Font.BOLD,15);
+    l1.setFont(f);
+    l2.setFont(f2);
+    l3.setFont(f2);
+    l4.setFont(f2);
+   l5.setFont(f2);
+   l6.setFont(f2);
+   l7.setFont(f2);
+    l8.setFont(f2);
+
+
+
+   add(l1);
+    add(l2); add(t1);
+    add(l3);       add(c1);
+     c1.add("2001"); c1.add("2002"); c1.add("2003"); c1.add("2004"); c1.add("2005");
+
+    add(l4);  add(t2);
+    add(l5); add(ca1); add(ca2);
+     add(l6); add(c2);
+     c2.add("S.K Hospital"); c2.add("A.R Hospital"); c2.add("City Hospital");
+      add(l7); add(cv1); add(cv2); add(cv3);
+      add(l8); 
+      add(ct1); add(ct2); add(ct3);
+      add(b1);add(b2);add(b3);add(b4);add(b5);
+      b1.addActionListener(this);
+      b2.addActionListener(this);
+      b3.addActionListener(this);
+      b4.addActionListener(this);
+      b5.addActionListener(this);
+
+ }
+
+ public void actionPerformed(ActionEvent ae)
+ {
+	 if(ae.getSource()==b1)
+	 {
+		 try
+		 {
+			 String ano=t1.getText();
+			 String by=c1.getSelectedItem().toString();
+			 String mob=t2.getText();
+			 String ag="";
+			 if(ca1.getState()==true)
+				 ag=ca1.getLabel().toString();
+			 else
+				 ag=ca2.getLabel().toString();
+			 String hn=c2.getSelectedItem().toString();
+			 String cv="";
+			 if(cv1.getState()==true)
+				 cv=cv1.getLabel().toString();
+			 else if(cv2.getState()==true)
+				 cv=cv2.getLabel().toString();
+			 else if(cv3.getState()==true)
+				 cv=cv3.getLabel().toString();
+			 
+			 String ts="";
+			 if(ct1.getState()==true)
+				 ts=ct1.getLabel().toString();
+			 else if(ct2.getState()==true)
+				 ts=ct2.getLabel().toString();
+			 else if(ct3.getState()==true)
+				 ts=ct3.getLabel().toString();
+			
+			 pst=con.prepareStatement("insert into covin values(?,?,?,?,?,?,?)");
+			 pst.setString(1, ano);
+			 pst.setInt(2,Integer.parseInt(by));
+			 pst.setString(3, mob);
+			 pst.setString(4, ag);
+			 pst.setString(5, hn);
+			 pst.setString(6, cv);
+			 pst.setString(7, ts);
+			 int k=pst.executeUpdate();
+			 if(k>=1)
+				 JOptionPane.showMessageDialog(this,"Record insert...");
+			 else
+				 JOptionPane.showMessageDialog(this,"Erroro..");
+		 }catch(Exception e)
+		 {
+			 JOptionPane.showMessageDialog(this,e);
+		 }
+	 }
+	 if(ae.getSource()==b5)
+	 {
+		 try
+		 {
+           String ano=t1.getText();
+           pst=con.prepareStatement("select * from covin where ano=?");
+           pst.setString(1, ano);
+		   rs=pst.executeQuery();
+		   if(rs.next())
+		   {
+			c1.insert(rs.getString(2),0);
+			t2.setText(rs.getString(3));
+			if(rs.getString(4).equals(ca1.getLabel().toString()))
+				ca1.setState(true);
+			else
+				ca2.setState(true);
+			
+			c2.insert(rs.getString(5),0);
+			
+			if(rs.getString(6).equals(cv1.getLabel()))
+				cv1.setState(true);
+			else if(rs.getString(6).equals(cv2.getLabel()))
+				cv2.setState(true);
+			else if(rs.getString(6).equals(cv3.getLabel()))
+				cv3.setState(true);
+			
+			
+			if(rs.getString(7).equals(ct1.getLabel()))
+				ct1.setState(true);
+			else if(rs.getString(7).equals(ct2.getLabel()))
+				ct2.setState(true);
+			else if(rs.getString(7).equals(ct3.getLabel()))
+				ct3.setState(true);
+			
+		   }else
+		   {
+			   JOptionPane.showMessageDialog(this,"Record not found....."); 
+		   }
+		 }catch(Exception e)
+		 {
+			 JOptionPane.showMessageDialog(this,e);
+		 }
+	 }
+	 
+	 if(ae.getSource()==b3)
+	 {
+		 try
+		 {
+			 String ano=t1.getText();
+			 pst=con.prepareStatement("delete from covin where ano=?");
+	           pst.setString(1, ano);
+			 int k=pst.executeUpdate();
+			 if(k>=1)
+				 JOptionPane.showMessageDialog(this,"Record deleted.....");
+			 else
+				 JOptionPane.showMessageDialog(this,"Record not found..");
+		 }catch(Exception e)
+		 {
+			 JOptionPane.showMessageDialog(this, e);
+		 }
+	 }
+	 if(ae.getSource()==b2)
+	 {
+		 try
+		 {
+			 String ano=t1.getText();
+			 String by=c1.getSelectedItem().toString();
+			 String mob=t2.getText();
+			 String ag="";
+			 if(ca1.getState()==true)
+				 ag=ca1.getLabel().toString();
+			 else
+				 ag=ca2.getLabel().toString();
+			 String hn=c2.getSelectedItem().toString();
+			 String cv="";
+			 if(cv1.getState()==true)
+				 cv=cv1.getLabel().toString();
+			 else if(cv2.getState()==true)
+				 cv=cv2.getLabel().toString();
+			 else if(cv3.getState()==true)
+				 cv=cv3.getLabel().toString();
+			 
+			 String ts="";
+			 if(ct1.getState()==true)
+				 ts=ct1.getLabel().toString();
+			 else if(ct2.getState()==true)
+				 ts=ct2.getLabel().toString();
+			 else if(ct3.getState()==true)
+				 ts=ct3.getLabel().toString();
+			
+			 pst=con.prepareStatement("update covin set birth_year=?,mobile=?,age_group=?,hospital=?,vaccines=?,time_slot=? where ano=?");
+			 pst.setInt(1,Integer.parseInt(by));
+			 pst.setString(2, mob);
+			 pst.setString(3, ag);
+			 pst.setString(4, hn);
+			 pst.setString(5, cv);
+			 pst.setString(6, ts);
+			 pst.setString(7, ano);
+			 int k=pst.executeUpdate();
+			 if(k>=1)
+				 JOptionPane.showMessageDialog(this,"Record updated...");
+			 else
+				 JOptionPane.showMessageDialog(this,"Erroro..");
+		 }catch(Exception e)
+		 {
+			 JOptionPane.showMessageDialog(this,e);
+		 }
+	 }
+	
+ }
+   public static void main(String arg[])
+   {
+       new CDemo();
+   }
+}
