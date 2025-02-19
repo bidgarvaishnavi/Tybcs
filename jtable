@@ -1,0 +1,229 @@
+import java.sql.*;
+
+import java.util.*;
+
+
+
+import javax.swing.*;
+
+
+
+import java.awt.*;
+
+import java.awt.event.*;
+
+public class JTableDemo extends JFrame implements ItemListener,ActionListener
+
+{
+
+	Connection con;
+
+	Statement st;
+
+	ResultSet rs;
+
+	JTable tbl;
+
+	Vector data,head;
+
+Choice c1;
+
+JButton b1;
+
+JTableDemo()
+
+	{
+
+	   setVisible(true);
+
+	   setSize(500, 500);
+
+	   setLayout(null);
+
+	   c1=new Choice();
+
+	   b1=new JButton("View All Students:");
+
+	   b1.setBounds(200, 10, 150, 50);
+
+	   add(b1);
+
+	   try
+
+	   {
+
+		Class.forName("org.postgresql.Driver");
+
+		con=DriverManager.getConnection("jdbc:postgresql:rbnb","postgres","root");
+
+		st=con.createStatement();
+
+		rs=st.executeQuery("select * from course");
+
+		while(rs.next())
+
+		{
+
+			c1.add(""+rs.getString(2));
+
+		}
+
+		rs.close();
+
+		c1.setBounds(100, 10,100, 50);
+
+		add(c1);
+
+	   }catch(Exception e)
+
+	   {
+
+       JOptionPane.showMessageDialog(this,"Error="+e);
+
+	   }
+
+	   c1.addItemListener(this);
+
+	   b1.addActionListener(this);
+
+	}
+
+	public void itemStateChanged(ItemEvent ie)
+
+	{
+
+	  if(ie.getSource()==c1)
+
+	  {
+
+		  head=new Vector();
+
+		   head.add("Student Id");
+
+		   head.add("Student Name");
+
+		   head.add("Class");
+
+		   data=new Vector();   
+
+		  try
+
+		  {
+
+			  String cn=c1.getSelectedItem().toString();
+
+			  rs=st.executeQuery("select student.* from student,course,cs where student.studentid=cs.studentid and course.courseid=cs.coursed and coursename='"+cn+"'");
+
+					  while(rs.next())
+
+						{
+
+							Vector row=new Vector();
+
+							row.add(rs.getString(1));
+
+							row.add(rs.getString(2));
+
+							row.add(rs.getString(3));
+
+							data.add(row);
+
+						}
+
+						tbl=new JTable(data,head);
+
+						JScrollPane jsp=new JScrollPane(tbl);
+
+						jsp.setBounds(100,100,400,400);
+
+						add(jsp);
+
+
+
+		  }catch(Exception e)
+
+		  {
+
+		       JOptionPane.showMessageDialog(this,"Error="+e);
+
+		  }
+
+	  }
+
+	}
+
+	@Override
+
+	public void actionPerformed(ActionEvent ae)
+
+	{
+
+	  if(ae.getSource()==b1)
+
+	  {
+
+		  head=new Vector();
+
+		   head.add("Student Id");
+
+		   head.add("Student Name");
+
+		   head.add("Class");
+
+		   data=new Vector();  
+
+		 
+
+		  try
+
+		  {
+
+			  rs=st.executeQuery("select * from student");
+
+					  while(rs.next())
+
+						{
+
+							Vector row=new Vector();
+
+							row.add(rs.getString(1));
+
+							row.add(rs.getString(2));
+
+							row.add(rs.getString(3));
+
+							data.add(row);
+
+						}
+
+						tbl=new JTable(data,head);
+
+						JScrollPane jsp=new JScrollPane(tbl);
+
+						jsp.setBounds(100,100,400,400);
+
+						add(jsp);
+
+
+
+		  }catch(Exception e)
+
+		  {
+
+		       JOptionPane.showMessageDialog(this,"Error="+e);
+
+		  }		 
+
+	  }
+
+	}
+
+   public static void main(String[] args)
+
+   {
+
+	 new JTableDemo();
+
+   }
+
+}
